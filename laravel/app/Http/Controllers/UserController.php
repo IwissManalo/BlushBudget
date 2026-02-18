@@ -25,5 +25,33 @@ class UserController extends Controller
         return redirect('/');
     }
 
+    public function logout()
+    {
+        auth()->logout();
+        return redirect('/');
+    }
 
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'loginusername' => ['required'],
+            'loginpassword' => ['required'],
+        ]);
+    
+        if (auth()->attempt([
+            'username' => $credentials['loginusername'],
+            'password' => $credentials['loginpassword'],
+        ])) {
+    
+            $request->session()->regenerate();
+    
+            return redirect('/');
+    
+        }
+    
+        return back()->withErrors([
+            'loginusername' => 'Invalid credentials',
+        ]);
+    }
+    
 }
